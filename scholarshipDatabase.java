@@ -1,10 +1,33 @@
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.io.File;
+
 public class scholarshipDatabase {
     private ArrayList <scholarship> database; //This is our arraylist mock database
+    private String filename; // Name of the text file
     
-    public scholarshipDatabase(){ //This is the default constructor
-        this.database = new ArrayList<>();
+    public scholarshipDatabase(String filename) { // Constructor with filename
+        this.database = new ArrayList<scholarship>();
+        this.filename = filename;
+        readFromTextFile(); // Read data from text file
+    }
+
+    private void readFromTextFile() {
+        try (Scanner fileScanner = new Scanner(new File(filename))) {
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine();
+                if (line!= null) {
+                    String[] parts = line.split(","); // Assuming comma-separated values
+                    // Create scholarship object from parts and add to the database
+                    scholarship newScholarship = new scholarship(parts[0], Integer.parseInt(parts[1]), parts[2], parts[3], parts[4]);
+                    database.add(newScholarship);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found: " + filename);
+        }
     }
     ///// Start Overloaded constructors for the scholarshipDatabase class /////
     public scholarshipDatabase(ArrayList <scholarship> database){
@@ -12,72 +35,78 @@ public class scholarshipDatabase {
     }
     ///// End Overloaded constructors for the scholarshipDatabase class /////
     
-    public void addToDatabase(scholarship newScholarship){ 
-        database.add(newScholarship); //This adds a new scholarship to the database
+    public void addToDatabase(scholarship newScholarship) { 
+        database.add(newScholarship);
+        saveToTextFile(); // Save changes to text file
     }
 
-
-    public void removeFromDatabase(String inputScholarshipName){ 
-        boolean deleted = false; //This is a boolean to check if the scholarship was deleted
-        for(int i = 0; i < database.size(); i++) { //This loops through the database
-            if (database.get(i).getScholarshipName().equals(inputScholarshipName)) { //This checks if the scholarship is in the database
-                database.remove(i); //This removes the scholarship from the database
-                System.out.println("Scholarship '" + inputScholarshipName + "' removed from database");
-                deleted = true; //This sets the boolean to true
+    public void removeFromDatabase(String inputScholarshipName) { 
+        boolean deleted = false;
+        for (int i = 0; i < database.size(); i++) {
+            if (database.get(i).getScholarshipName().equals(inputScholarshipName)) {
+                database.remove(i);
+                deleted = true;
+                break; // Break after deleting to avoid ConcurrentModificationException
             }
         }
-        if(deleted == false){ //This checks if the scholarship was deleted
+        if (deleted) {
+            System.out.println("Scholarship '" + inputScholarshipName + "' removed from database");
+            saveToTextFile(); // Save changes to text file
+        } else {
             System.out.println("Scholarship '" + inputScholarshipName + "' not found in database. No scholarships removed.");
         }
-        else{
-            System.out.println("Scholarship '" + inputScholarshipName + "' removed from database");
-        }
-
     }
 
-
-    public void editScholarshipInDatabase(String inputScholarshipName, Scanner input){ 
-        boolean found = false; //This is a boolean to check if the scholarship was found
-        for(int i = 0; i < database.size(); i++) { //This loops through the database
-            if(database.get(i).getScholarshipName().equals(inputScholarshipName)){ //NAMES are immutable so we can always use this to find the scholarship
-                found = true; //This sets the boolean to true
+    public void editScholarshipInDatabase(String inputScholarshipName, Scanner input) { 
+        for (scholarship schol : database) {
+            if (schol.getScholarshipName().equals(inputScholarshipName)) {
                 int choice = 1;
-                while(choice != 0){
+                while (choice != 0) {
                     updateScholarshipMenu();
                     choice = input.nextInt();
-                    input.nextLine(); //This is to clear the buffer
-                    if(choice == 1){ //Payout
-                        System.out.print("Enter new payout: ");
-                        int newPayout = input.nextInt();
-                        input.nextLine(); //This is to clear the buffer
-                        database.get(i).setPayout(newPayout);
-                    }
-                    else if(choice == 2){ //Deadline
-                        System.out.print("Enter new deadline: ");
-                        String newDeadline = input.nextLine();
-                        database.get(i).setDeadline(newDeadline);
-                    }
-                    else if(choice == 3){ //Custom Required Information
-                        System.out.print("Enter new custom required information: (CSV)");
-                        String newCustomRequiredInfo = input.nextLine();
-                        database.get(i).setCustomRequiredInfo(newCustomRequiredInfo);
-                    }
-                    else if(choice == 4){ //Preferred Majors
-                        System.out.print("Enter new preferred majors: ");
-                        String newPreferredMajors = input.nextLine();
-                        database.get(i).setPreferedMajors(newPreferredMajors);
-                    }
-                    else{
-                        System.out.println("Invalid option. Please try again.");
+                    input.nextLine(); // Clear the buffer
+                    switch (choice) {
+                        case 1:
+                            System.out.print("Enter new payout: ");
+                            int newPayout = input.nextInt();
+                            input.nextLine(); // Clear the buffer
+                            schol.setPayout(newPayout);
+                            break;
+                        case 2:
+                            System.out.print("Enter new deadline: ");
+                            String newDeadline = input.nextLine();
+                            schol.setDeadline(newDeadline);
+                            break;
+                        case 3:
+                            System.out.print("Enter new custom required information: (CSV)");
+                            String newCustomRequiredInfo = input.nextLine();
+                            schol.setCustomRequiredInfo(newCustomRequiredInfo);
+                            break;
+                        case 4:
+                            System.out.print("Enter new preferred majors: ");
+                            String newPreferredMajors = input.nextLine();
+                            schol.setPreferedMajors(newPreferredMajors);
+                            break;
+                        default:
+                            System.out.println("Invalid option. Please try again.");
+                            break;
                     }
                 }
+                saveToTextFile(); // Save changes to text file
+                System.out.println("Scholarship '" + inputScholarshipName + "' edited in database");
+                return;
             }
         }
-        if(found == false){ //This checks if the scholarship was found
-            System.out.println("Scholarship '" + inputScholarshipName + "' not found in database. No scholarships edited.");
-        }
-        else{
-            System.out.println("Scholarship '" + inputScholarshipName + "' edited in database");
+        System.out.println("Scholarship '" + inputScholarshipName + "' not found in database. No scholarships edited.");
+    }
+
+    private void saveToTextFile() {
+        try (PrintWriter writer = new PrintWriter(filename)) {
+            for (scholarship schol : database) {
+                writer.println(schol.getScholarshipName() + "," + schol.getPayout() + "," + schol.getCustomRequiredInfo() + "," + schol.getDeadline() + "," + schol.getPreferedMajors()); // Write each scholarship as a line in the text file
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("Error saving to file: " + e.getMessage());
         }
     }
 
