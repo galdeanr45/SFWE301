@@ -35,7 +35,8 @@ public class backend {
     }
 
     public void Timeout(long startTime){
-        long timeoutMs = 5000;  // Set a timeout value in milliseconds (e.g., 5000 milliseconds = 5 seconds)
+        // Set a timeout value in milliseconds (e.g., 5000 milliseconds = 5 seconds)
+        long timeoutMs = 1200000;  //20 min 
        
         if (System.currentTimeMillis() - startTime >= timeoutMs) {
             System.out.println("\n***************************Inactivity the system will close******************************************");
