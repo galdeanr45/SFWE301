@@ -1,4 +1,0 @@
-bob,1,bob,bob,bob
-bill,2,bill,bill,bill
-bo\nbb\ny,3,bo\nbb\ny,bo\nbb\ny,bo\nbb\ny
-bo,b,b,y,34,bo,b,b,y,bo,b,b,y,bo,b,b,y
