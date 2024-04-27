@@ -43,8 +43,8 @@ public class userDatabase {
                         newStudent.setUnitsEnrolled(Integer.parseInt(parts[9]));
                         newStudent.setExpectedGraduation(parts[10]);
                         newStudent.setEssayResponses(parts[11]);
-                        newStudent.setBursarAccountReference(parts[12]);
-                        database.add(newStudent);*/
+                        newStudent.setBursarAccountReference(parts[12]);*/
+                        database.add(newStudent);
                         //Print a new line before the menu comes back up
                     }
                     else if(userPermissions.equals("admin")){
