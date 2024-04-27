@@ -1,10 +1,136 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 public class userDatabase {
     private ArrayList <user> database; //This is our arraylist mock database
+    private String fileName;
 
-    public userDatabase(){ //This is the default constructor
+    public userDatabase(String file){ //This is the default constructor
         this.database = new ArrayList<>();
+        this.fileName = file;
+
+        readFromTextFile();
+    }
+
+    private void readFromTextFile() {
+        try (Scanner fileScanner = new Scanner(new File(fileName))) {
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine();
+                if (line!= null) {
+                    String[] parts = line.split(","); // Assuming comma-separated values
+                    String userName = parts[0];
+                    String userEmail = parts[1];
+                    String userSQuestion = parts[2];
+                    String userSAnswer = parts[3];
+                    String userPermissions = parts[4];
+                    // Create scholarship object from parts and add to the database
+                    if(userPermissions.equals("student")){
+                        student newStudent = new student();
+                        newStudent.setUserPermission(userPermissions); //Sets the user permission
+                        newStudent.setName(userName);
+                        newStudent.setEmailAddress(userEmail);
+                        newStudent.setSecurityQuestion(userSQuestion);
+                        newStudent.setSecurityQuestionAnswers(userSAnswer);
+                        newStudent.setMajor(parts[5]);
+                        newStudent.setGpa(Double.parseDouble(parts[6]));
+                        newStudent.setStudentID(parts[7]);
+                        newStudent.setCitizenship(parts[8]);
+                        newStudent.setUnitsEnrolled(Integer.parseInt(parts[9]));
+                        newStudent.setExpectedGraduation(parts[10]);
+                        newStudent.setEssayResponses(parts[11]);
+                        newStudent.setBursarAccountReference(parts[12]);
+                        database.add(newStudent);
+                        //Print a new line before the menu comes back up
+                    }
+                    else if(userPermissions.equals("admin")){
+                        Admin newAdmin = new Admin();
+                        newAdmin.setUserPermission(userPermissions); //Sets the user permission
+                        newAdmin.setUserPermission(userPermissions); //Sets the user permission
+                        newAdmin.setName(userName);
+                        newAdmin.setEmailAddress(userEmail);
+                        newAdmin.setSecurityQuestion(userSQuestion);
+                        newAdmin.setSecurityQuestionAnswers(userSAnswer);
+                        newAdmin.setAdminID(parts[5]);
+                        database.add(newAdmin);
+                    }
+                    else if(userPermissions.equals("donor")){
+                        donor newDonor = new donor();
+                        newDonor.setUserPermission(userPermissions); //Sets the user permission
+                        newDonor.setUserPermission(userPermissions); //Sets the user permission
+                        newDonor.setName(userName);
+                        newDonor.setEmailAddress(userEmail);
+                        newDonor.setSecurityQuestion(userSQuestion);
+                        newDonor.setSecurityQuestionAnswers(userSAnswer);
+                        newDonor.setBursarAccountReference(parts[5]);
+                        newDonor.setDonorID(parts[6]);
+                        database.add(newDonor);
+                    }
+                    else if(userPermissions.equals("reviewer")){
+                        reviewer newReviewer = new reviewer();
+                        newReviewer.setUserPermission(userPermissions);  //Sets the user permission
+                        newReviewer.setUserPermission(userPermissions); //Sets the user permission
+                        newReviewer.setName(userName);
+                        newReviewer.setEmailAddress(userEmail);
+                        newReviewer.setSecurityQuestion(userSQuestion);
+                        newReviewer.setSecurityQuestionAnswers(userSAnswer);
+                        newReviewer.setReviewerID(parts[5]);
+                        database.add(newReviewer);
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found: " + fileName);
+        }
+    }
+
+    private void writeToFile() {
+        try (PrintWriter bw = new PrintWriter(new FileWriter(fileName))) {
+            for (user user : database) {
+                if (user.getUserPermission().equals("student")) {
+                    bw.println(
+                        user.getName() + "," +
+                        user.getEmailAddress() + "," + 
+                        user.getSecurityQuestion() + "," + 
+                        user.getSecurityQuestionAnswers() + "," + 
+                        user.getUserPermission() + ","
+                    );
+                }
+                else if (user.getUserPermission().equals("admin")) {
+                    bw.println(
+                        user.getName() + "," +
+                        user.getEmailAddress() + "," + 
+                        user.getSecurityQuestion() + "," + 
+                        user.getSecurityQuestionAnswers() + "," + 
+                        user.getUserPermission() + ","
+                    );
+                }
+                else if (user.getUserPermission().equals("donor")) {
+                    bw.println(
+                        user.getName() + "," +
+                        user.getEmailAddress() + "," + 
+                        user.getSecurityQuestion() + "," + 
+                        user.getSecurityQuestionAnswers() + "," + 
+                        user.getUserPermission() + ","
+                    );
+                }
+                else if (user.getUserPermission().equals("reviewer")) {
+                    bw.println(
+                        user.getName() + "," +
+                        user.getEmailAddress() + "," + 
+                        user.getSecurityQuestion() + "," + 
+                        user.getSecurityQuestionAnswers() + "," + 
+                        user.getUserPermission() + ","
+                    );
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
     }
     ///// Start Overloaded constructors for the userDatabase class /////
     public userDatabase(ArrayList <user> database){
@@ -14,6 +140,7 @@ public class userDatabase {
     
     public void addToDatabase(user newUser){ 
         database.add(newUser); //This adds a new scholarship to the database
+        writeToFile();
     }
 
     
@@ -59,7 +186,9 @@ public class userDatabase {
             System.out.println("User '" + ID + "' not found in database. No users removed.");
         }
         else{
-            System.out.println("User '" + ID + "' removed from database");}
+            System.out.println("User '" + ID + "' removed from database");
+            writeToFile();
+        }
     }
 
 
@@ -126,6 +255,7 @@ public class userDatabase {
         }
         else{
             System.out.println("User '" + ID + "' edited in database");
+            writeToFile();
         }
     }
 
