@@ -2,6 +2,8 @@ import java.util.InputMismatchException;
 import java.util.Scanner; //this will be used to read in test data 
 
 public class backend {
+    
+
     ////Testing classes////
     public void printTestMenu(){
         System.out.println("Menu:");
@@ -32,8 +34,22 @@ public class backend {
         System.out.println();
     }
 
+    public void Timeout(long startTime){
+        long timeoutMs = 5000;  // Set a timeout value in milliseconds (e.g., 5000 milliseconds = 5 seconds)
+       
+        if (System.currentTimeMillis() - startTime >= timeoutMs) {
+            System.out.println("\n***************************Inactivity the system will close******************************************");
+            System.out.println("\n********** Thank you for using the UArizona Scholarship Application Management System. **********\n");
+            System.exit(0);
+        }
+
+    }
+
     ////Testing classes////
     public static void main(String[] args) {
+       
+        long startTime = System.currentTimeMillis(); ///start time of the program 
+
         Scanner input = new Scanner(System.in); //This creates a scanner object to read in test data
         backend app = new backend(); //This creates an instance of the backend class
         userDatabase userData = new userDatabase();
@@ -42,7 +58,7 @@ public class backend {
         boolean exit = false; //This is used to exit the program loop once the application is ended
 
         user currentUser = new user();
-        String baseAdminName = "Adimn1";
+        String baseAdminName = "Admin1";
         String baseAdminPermissions = "admin"; 
         String baseAdminID = "admin1";
         Admin admin = new Admin();
@@ -50,19 +66,33 @@ public class backend {
         admin.setAdminID(baseAdminID);
         admin.setUserPermission(baseAdminPermissions);
         //This creates our base admin account which will be the only account in the database at the start
-        userData.addToDatabase(admin); //This adds the admin to the database since they are the first user
-        currentUser = admin; //This sets the current user to the admin 
+        userData.addToDatabase(admin); //this adds the admin to the databased since you need an admin to add stuff
+
+        String baseUserName = "Start User"; 
+        String baseUserPermissions = "User"; 
+        String baseUserID = "User1"; 
+        StartUser bUser = new StartUser(); 
+        bUser.setName(baseUserName);
+        bUser.setsUserID(baseUserID); 
+        bUser.setUserPermission(baseUserPermissions); 
+        userData.addToDatabase(bUser);//This creates the initial user that will only have access to switch to another user 
+
+        currentUser = bUser; //This sets the current user to the based user 
 
         System.out.println("\n********** Welcome to the UArizona Scholarship Application Management System. **********\n");
         System.out.print("To start using the system type 'Login':");
-        String userStartInput = input.nextLine(); 
+        String userStartInput = input.nextLine(); //This is used to clear the scanner buffer
         while(exit == false){
+            app.Timeout(startTime); //checks for timelapse 
+            
             if(userStartInput.equals("Login")){
                 break;
             } //This is like a makeshift start menu
             else{
                 System.out.print("\nTo start using the system type 'Login':");
-                userStartInput = input.nextLine(); 
+                startTime = System.currentTimeMillis(); // Reset timer
+                userStartInput = input.nextLine(); //This is used to clear the scanner buffer
+                
             }
         }
         System.out.println();
@@ -71,9 +101,11 @@ public class backend {
             try{
                 app.printTestMenu();
                 System.out.print("Enter a number to select an option: ");
+                startTime = System.currentTimeMillis(); // Reset timer
                 int appAction = input.nextInt(); //This reads in the user's option
                 input.nextLine(); //This is used to clear the scanner buffer
                 int databaseAction; //This will be used to read in the user's option for the database test menu
+                app.Timeout(startTime); //checks for timelapce 
                 if(appAction == 0){
                     exit = true; //This will exit the loop on the next iteration
                 }
@@ -81,8 +113,10 @@ public class backend {
                     if(currentUser.getUserPermission().equals("admin")){ //This is guarded by the admin permission since only admins are allowed to work with user accounts
                         app.databaseTestMenu();
                         System.out.print("Enter a number to select an option: ");
+                        startTime = System.currentTimeMillis(); // Reset timer
                         databaseAction = input.nextInt(); //This reads in the user's option
                         input.nextLine(); //This is used to clear the scanner buffer
+                        app.Timeout(startTime); //checks for timelapse 
                         if(databaseAction == 1){ //add to user database
                             user newUser = new user();
                             newUser = admin.createAccount(input);
@@ -90,12 +124,16 @@ public class backend {
                         }
                         else if(databaseAction == 2){ //remove from user database
                             System.out.print("Enter the ID of the user you would like to remove: ");
+                            startTime = System.currentTimeMillis(); // Reset timer
                             String userName = input.nextLine(); //This reads in the user's option
+                            app.Timeout(startTime); //checks for timelapse 
                             userData.removeFromDatabase(userName);
                         }
                         else if(databaseAction == 3){ //edit user in database
                             System.out.print("Enter the ID of the user you would like to edit: ");
+                            startTime = System.currentTimeMillis(); // Reset timer
                             String userName = input.nextLine(); //This reads in the user's option
+                            app.Timeout(startTime); //checks for timelapse 
                             userData.editUserInDatabase(userName, input);
                         }
                         else if(databaseAction == 4){ //print user database
@@ -113,8 +151,10 @@ public class backend {
                     if(currentUser.getUserPermission().equals("donor")){ //Only donors can create scholarships
                         app.databaseTestMenu();
                         System.out.print("Enter a number to select an option: ");
+                        startTime = System.currentTimeMillis(); // Reset timer
                         databaseAction = input.nextInt(); //This reads in the user's option
                         input.nextLine(); //This is used to clear the scanner buffer
+                        app.Timeout(startTime); //checks for timelapse 
                         if(databaseAction == 1){ //add to scholarship database
                             scholarship newScholarship = new scholarship();
                             donor currentDonor = (donor) currentUser; //Need to typcast the current user to a donor
@@ -123,12 +163,16 @@ public class backend {
                         }
                         else if(databaseAction == 2){ //remove from scholarship database
                             System.out.print("Enter the name of the scholarship you would like to remove: ");
+                            startTime = System.currentTimeMillis(); // Reset timer
                             String scholarshipName = input.nextLine(); //This reads in the user's option
+                            app.Timeout(startTime); //checks for timelapse 
                             scholarshipData.removeFromDatabase(scholarshipName);
                         }
                         else if(databaseAction == 3){   //edit scholarship in database
                             System.out.print("Enter the name of the scholarship you would like to edit: ");
+                            startTime = System.currentTimeMillis(); // Reset timer
                             String scholarshipName = input.nextLine(); //This reads in the user's option
+                            app.Timeout(startTime); //checks for timelapse 
                             scholarshipData.editScholarshipInDatabase(scholarshipName, input);
                         }
                         else if(databaseAction == 4){ //print scholarship database
@@ -146,12 +190,16 @@ public class backend {
                    if(currentUser.getUserPermission().equals("student")){
                         app.applicationTestMenu();
                         System.out.print("Enter a number to select an option: ");
+                        startTime = System.currentTimeMillis(); // Reset timer
                         int action = input.nextInt(); //This reads in the user's option
                         input.nextLine(); //This is used to clear the scanner buffer
+                        app.Timeout(startTime); //checks for timelapse 
                         if(action == 1){ //New application to a scholarship
                             student currentStudent = (student) currentUser; //Need to typcast the current user to a student
                             System.out.print("Enter the name of the scholarship you would like to apply to: ");
+                            startTime = System.currentTimeMillis(); // Reset timer
                             String scholarshipName = input.nextLine(); //This reads in the user's option
+                            app.Timeout(startTime); //checks for timelapse 
                             scholarship returned = scholarshipData.searchByName(scholarshipName);
                             currentStudent.applyForScholarship(returned, input);
                             System.out.println();
@@ -159,7 +207,9 @@ public class backend {
                         else if(action == 2){ //Edit a previously submitted application
                             student currentStudent = (student) currentUser; //Need to typcast the current user to a student
                             System.out.print("Enter the name of the scholarship you would like to edit: ");
+                            startTime = System.currentTimeMillis(); // Reset timer
                             String scholarshipName = input.nextLine(); //This reads in the user's option
+                            app.Timeout(startTime); //checks for timelapse 
                             currentStudent.updateSavedApplications(scholarshipName, input);
                             System.out.println();
                         }
@@ -176,7 +226,9 @@ public class backend {
                         //This check the user permission we allow admins to do everything
                         scholarship foundScholarship;
                         System.out.print("Enter the name of the scholarship you would like to search for: ");
+                        startTime = System.currentTimeMillis(); // Reset timer
                         String scholarshipName = input.nextLine(); //This reads in the user's option
+                        app.Timeout(startTime); //checks for timelapse 
                         foundScholarship = scholarshipData.searchByName(scholarshipName);
                         if(foundScholarship != null){
                             foundScholarship.printScholarshipInfo(); //This prints the scholarship info
@@ -194,7 +246,9 @@ public class backend {
                     if(currentUser.getUserPermission().equals("admin")){
                         user foundUser;
                         System.out.println("Enter the name of the user you would like to search for: ");
+                        startTime = System.currentTimeMillis(); // Reset timer
                         String userName = input.nextLine(); //This reads in the user's option
+                        app.Timeout(startTime); //checks for timelapse 
                         foundUser = userData.searchByName(userName);
                         if(foundUser != null){
                             if(foundUser.getUserPermission().equals("admin")){
@@ -227,7 +281,9 @@ public class backend {
                 }
                 else if(appAction == 6){
                     System.out.print("Enter the ID numeber of the user you would like to switch to: ");
+                    startTime = System.currentTimeMillis(); // Reset timer
                     String userID = input.nextLine(); //This reads in the user's option
+                    app.Timeout(startTime); //checks for timelapse 
                     currentUser = userData.searchByID(userID);
                     if(currentUser != null){
                         System.out.println("User switched to " + currentUser.getName() + " (" + currentUser.getUserPermission() + ") successfully.");
@@ -240,7 +296,9 @@ public class backend {
                 else if(appAction == 7){
                     if(currentUser.getUserPermission().equals("student")){
                         System.out.print("Enter the name of the scholarship you would like to archive (For testing purposes): ");
+                        startTime = System.currentTimeMillis(); // Reset timer
                         String scholarshipName = input.nextLine(); //This reads in the user's option
+                        app.Timeout(startTime); //checks for timelapse 
                         scholarship foundScholarship = scholarshipData.searchByName(scholarshipName);
                         student currentStudent = (student) currentUser; //Need to typcast the current user to a student
                         if(foundScholarship != null){
