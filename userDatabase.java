@@ -36,7 +36,7 @@ public class userDatabase {
                         newStudent.setEmailAddress(userEmail);
                         newStudent.setSecurityQuestion(userSQuestion);
                         newStudent.setSecurityQuestionAnswers(userSAnswer);
-                        newStudent.setMajor(parts[5]);
+                        /*newStudent.setMajor(parts[5]);
                         newStudent.setGpa(Double.parseDouble(parts[6]));
                         newStudent.setStudentID(parts[7]);
                         newStudent.setCitizenship(parts[8]);
@@ -44,7 +44,7 @@ public class userDatabase {
                         newStudent.setExpectedGraduation(parts[10]);
                         newStudent.setEssayResponses(parts[11]);
                         newStudent.setBursarAccountReference(parts[12]);
-                        database.add(newStudent);
+                        database.add(newStudent);*/
                         //Print a new line before the menu comes back up
                     }
                     else if(userPermissions.equals("admin")){
@@ -55,7 +55,7 @@ public class userDatabase {
                         newAdmin.setEmailAddress(userEmail);
                         newAdmin.setSecurityQuestion(userSQuestion);
                         newAdmin.setSecurityQuestionAnswers(userSAnswer);
-                        newAdmin.setAdminID(parts[5]);
+                        /*newAdmin.setAdminID(parts[5]);*/
                         database.add(newAdmin);
                     }
                     else if(userPermissions.equals("donor")){
@@ -66,8 +66,8 @@ public class userDatabase {
                         newDonor.setEmailAddress(userEmail);
                         newDonor.setSecurityQuestion(userSQuestion);
                         newDonor.setSecurityQuestionAnswers(userSAnswer);
-                        newDonor.setBursarAccountReference(parts[5]);
-                        newDonor.setDonorID(parts[6]);
+                        /*newDonor.setBursarAccountReference(parts[5]);
+                        newDonor.setDonorID(parts[6]);*/
                         database.add(newDonor);
                     }
                     else if(userPermissions.equals("reviewer")){
@@ -78,7 +78,7 @@ public class userDatabase {
                         newReviewer.setEmailAddress(userEmail);
                         newReviewer.setSecurityQuestion(userSQuestion);
                         newReviewer.setSecurityQuestionAnswers(userSAnswer);
-                        newReviewer.setReviewerID(parts[5]);
+                        //newReviewer.setReviewerID(parts[5]);
                         database.add(newReviewer);
                     }
                 }
