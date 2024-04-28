@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.InputMismatchException;
 import java.util.Scanner; //this will be used to read in test data 
 
@@ -48,13 +50,25 @@ public class backend {
 
     ////Testing classes////
     public static void main(String[] args) {
-       
+        String sLine = "";
+        String uLine = "";
         long startTime = System.currentTimeMillis(); ///start time of the program 
-
+        try (Scanner fileScanner = new Scanner(new File("sDatabaseLog.txt"))) {
+            sLine = fileScanner.nextLine();
+            sLine = sLine.trim();
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found: " + "sDatabaseLog.txt");
+        }
+        try (Scanner fileScanner = new Scanner(new File("uDatabaseLog.txt"))) {
+            uLine = fileScanner.nextLine();
+            uLine = sLine.trim();
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found: " + "uDatabaseLog.txt");
+        }
         Scanner input = new Scanner(System.in); //This creates a scanner object to read in test data
         backend app = new backend(); //This creates an instance of the backend class
-        userDatabase userData = new userDatabase("userDatabase.txt");
-        scholarshipDatabase scholarshipData = new scholarshipDatabase("scholarshipDatabase.txt");
+        userDatabase userData = new userDatabase(uLine);
+        scholarshipDatabase scholarshipData = new scholarshipDatabase(sLine);
         //This creates an object of each of our databases
         boolean exit = false; //This is used to exit the program loop once the application is ended
 
@@ -333,4 +347,5 @@ public class backend {
         System.out.println("\n********** Thank you for using the UArizona Scholarship Application Management System. **********\n");
         input.close(); //This closes the scanner object
     }
+    
 }

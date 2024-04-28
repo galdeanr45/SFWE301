@@ -7,10 +7,12 @@ import java.io.File;
 public class scholarshipDatabase {
     private ArrayList <scholarship> database; //This is our arraylist mock database
     private String filename; // Name of the text file
+    private int fileNumber;
     
-    public scholarshipDatabase(String filename) { // Constructor with filename
+    public scholarshipDatabase(String fileNumber) { // Constructor with filename
         this.database = new ArrayList<scholarship>();
-        this.filename = filename;
+        this.fileNumber = Integer.parseInt(fileNumber);
+        this.filename = "scholarshipDatabase" + fileNumber + ".txt";
         readFromTextFile(); // Read data from text file
     }
 
@@ -101,11 +103,24 @@ public class scholarshipDatabase {
     }
 
     private void saveToTextFile() {
+        if (fileNumber >= 5) {
+            this.fileNumber = 1;
+        }
+        else {
+            this.fileNumber++;
+        }
+        this.filename = "scholarshipDatabase" + Integer.toString(fileNumber) + ".txt";
         try (PrintWriter writer = new PrintWriter(filename)) {
             for (scholarship schol : database) {
                 writer.println(schol.getScholarshipName() + "," + schol.getPayout() + "," + schol.getCustomRequiredInfo() + "," + schol.getDeadline() + "," + schol.getPreferedMajors()); // Write each scholarship as a line in the text file
             }
         } catch (FileNotFoundException e) {
+            System.err.println("Error saving to file: " + e.getMessage());
+        }
+        try (PrintWriter writer2 = new PrintWriter("uDatabaseLog.txt")) {
+            writer2.print(Integer.toString(fileNumber));
+        }
+        catch (FileNotFoundException e){
             System.err.println("Error saving to file: " + e.getMessage());
         }
     }

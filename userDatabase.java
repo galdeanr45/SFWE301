@@ -9,10 +9,12 @@ import java.io.PrintWriter;
 public class userDatabase {
     private ArrayList <user> database; //This is our arraylist mock database
     private String fileName;
+    private int fileNumber;
 
-    public userDatabase(String file){ //This is the default constructor
+    public userDatabase(String fileNumber){ //This is the default constructor
         this.database = new ArrayList<>();
-        this.fileName = file;
+        this.fileNumber = Integer.parseInt(fileNumber);
+        this.fileName = "userDatabase" + fileNumber + ".txt";
 
         readFromTextFile();
     }
@@ -28,7 +30,6 @@ public class userDatabase {
                     String userSQuestion = parts[2];
                     String userSAnswer = parts[3];
                     String userPermissions = parts[4];
-                    // Create scholarship object from parts and add to the database
                     if(userPermissions.equals("student")){
                         student newStudent = new student();
                         newStudent.setUserPermission(userPermissions); //Sets the user permission
@@ -89,6 +90,13 @@ public class userDatabase {
     }
 
     private void writeToFile() {
+        if (fileNumber >= 5) {
+            this.fileNumber = 1;
+        }
+        else {
+            this.fileNumber++;
+        }
+        this.fileName = "userDatabase" + Integer.toString(fileNumber) + ".txt";
         try (PrintWriter bw = new PrintWriter(new FileWriter(fileName))) {
             for (user user : database) {
                 if (user.getUserPermission().equals("student")) {
